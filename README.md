@@ -9,6 +9,7 @@
 - `scripts/git-submit-scripts-skills.sh`：提交 `scripts/`、`skills/` 与 `README.md` 到 `origin/main`（若改了 scripts/skills 但未改 README，会自动补一条 README 提交记录）
 - `skills/京东转链助手/`：京东链接自动转链技能
 - `skills/git-submit-scripts-skills/`：规范化 git 提交流程技能（支持“git提交”触发）
+- `skills/weather/`：天气查询技能（基于 wttr.in，支持当前天气与预报）
 
 ## 快速使用
 
