@@ -15,6 +15,7 @@ description: Commit and push script/skill changes to GitHub main branch for repo
 1. 确保远程正确：`origin` 指向 `git@github.com:Haha-li/openClaw-skills-own.git`。
 2. 切换到 `main` 分支并拉取最新：`git checkout main && git pull --rebase origin main`。
 3. 更新 `README.md`（新增/修改脚本或 skill 的用途、路径、用法）。
+   - 若未手动更新 README，但 `scripts/` 或 `skills/` 有变更，自动在 README 追加“提交记录（自动）”条目，保证同次提交包含 README 变更。
 4. 暂存相关路径：
    - `git add scripts/ skills/ README.md`
 5. 检查是否有可提交内容：

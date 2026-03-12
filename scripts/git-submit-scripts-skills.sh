@@ -27,6 +27,21 @@ fi
 
 git pull --rebase origin "$BRANCH" || true
 
+# If scripts/ or skills/ changed, ensure README is updated in the same commit.
+if ! git diff --quiet -- scripts/ skills/ || ! git diff --cached --quiet -- scripts/ skills/; then
+  if git diff --quiet -- README.md && git diff --cached --quiet -- README.md; then
+    TS="$(date -u +"%Y-%m-%d %H:%M UTC")"
+    if ! grep -q "^## 提交记录（自动）" README.md 2>/dev/null; then
+      {
+        echo
+        echo "## 提交记录（自动）"
+      } >> README.md
+    fi
+    echo "- ${TS} - ${MSG}" >> README.md
+    echo "README.md auto-updated for this submit."
+  fi
+fi
+
 git add scripts/ skills/ README.md
 
 if git diff --cached --quiet; then
@@ -37,4 +52,4 @@ fi
 git commit -m "$MSG"
 git push origin "$BRANCH"
 
-echo "Pushed scripts/ and skills/ to origin/$BRANCH"
+echo "Pushed scripts/ skills/ README.md to origin/$BRANCH"
