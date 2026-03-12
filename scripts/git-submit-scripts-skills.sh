@@ -27,10 +27,10 @@ fi
 
 git pull --rebase origin "$BRANCH" || true
 
-git add scripts/ skills/
+git add scripts/ skills/ README.md
 
 if git diff --cached --quiet; then
-  echo "No changes in scripts/ or skills/."
+  echo "No changes in scripts/, skills/, or README.md."
   exit 0
 fi
 

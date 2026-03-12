@@ -5,7 +5,10 @@
 ## 目录
 
 - `scripts/oil_price.py`：查询中国各省今日油价（92/95/98/0#柴油）
+- `scripts/cleanup-cache.sh`：一键清理 Docker 构建缓存/悬空资源与常见包缓存（不碰数据卷）
+- `scripts/git-submit-scripts-skills.sh`：提交 `scripts/`、`skills/` 与 `README.md` 到 `origin/main`
 - `skills/京东转链助手/`：京东链接自动转链技能
+- `skills/git-submit-scripts-skills/`：规范化 git 提交流程技能（支持“git提交”触发）
 
 ## 快速使用
 
@@ -27,7 +30,22 @@ python3 scripts/oil_price.py 山东
 0#柴油：7.19 元/升
 ```
 
-### 2) 京东转链助手
+### 2) 清理缓存（不删 Docker 卷）
+
+```bash
+scripts/cleanup-cache.sh --dry-run
+scripts/cleanup-cache.sh
+scripts/cleanup-cache.sh --aggressive
+```
+
+### 3) 提交脚本与技能（含 README）
+
+```bash
+scripts/git-submit-scripts-skills.sh
+scripts/git-submit-scripts-skills.sh /root/.openclaw/workspace "chore: sync scripts skills and readme"
+```
+
+### 4) 京东转链助手
 
 见：`skills/京东转链助手/SKILL.md`
 
