@@ -1,44 +1,67 @@
-# 挖煤姬自动签到脚本（Playwright）
+# 挖煤姬自动签到（agent-browser 版）
 
-> 本方案不需要在聊天里提供账号密码。
+已按你要求改为 **agent-browser** 实现。
 
-## 1) 安装依赖
+## 前置
+
+确保 `agent-browser` 可用：
 
 ```bash
-cd scripts/wameiji-auto
-npm install
-npx playwright install
+agent-browser --version
 ```
 
-## 2) 首次手动登录并保存会话
+若未安装：
 
 ```bash
-npm run login
+npm i -g agent-browser
+agent-browser install
 ```
 
-会打开可视化浏览器，你手动登录挖煤姬后回到终端按 Enter，保存 `storageState.json`。
+---
 
-## 3) 测试签到
+## 1) 首次手动登录并保存会话
 
 ```bash
-npm run checkin
+cd /root/.openclaw/workspace/scripts/wameiji-auto
+./login_once_agent-browser.sh
+```
+
+会打开可视化浏览器，你手动完成登录后回终端按 Enter。
+登录态会保存到：`state/wameiji-auth.json`
+
+---
+
+## 2) 测试自动签到
+
+```bash
+./checkin_agent-browser.sh
 ```
 
 脚本会：
-- 尝试进入“我的/签到”页面
+- 加载已保存登录态
+- 尝试进入“我的 / 每日签到”
 - 点击“立即签到”
-- 输出结果
-- 自动保存截图到 `screenshots/`
+- 保存截图到 `screenshots/`
 
-## 4) 定时执行（cron）
+---
+
+## 3) 加入每日定时任务（cron）
 
 北京时间 09:00 = UTC 01:00：
 
 ```cron
-0 1 * * * cd /root/.openclaw/workspace/scripts/wameiji-auto && /usr/bin/node checkin.js >> checkin.log 2>&1
+0 1 * * * cd /root/.openclaw/workspace/scripts/wameiji-auto && ./checkin_agent-browser.sh >> logs/checkin.log 2>&1
 ```
 
-## 说明
+---
 
-- 若页面文案或结构变动，选择器可能失效，需要更新 `checkin.js`。
-- 若登录态过期，重新执行 `npm run login` 即可。
+## 常见问题
+
+1. **提示找不到按钮**
+   - 挖煤姬页面文案改了，更新 `checkin_agent-browser.sh` 中的 `find text` 关键词即可。
+
+2. **登录失效**
+   - 重新运行：`./login_once_agent-browser.sh`
+
+3. **脚本返回警告但你实际已签到**
+   - 有时页面提示文案不固定，先看 `screenshots/` 截图确认；再把成功文案补到 grep 条件里。
