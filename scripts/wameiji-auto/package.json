@@ -6,9 +6,11 @@
   "main": "checkin.js",
   "scripts": {
     "login": "node login_once.js",
+    "login:auto": "node login_auto.js",
     "checkin": "node checkin.js"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "playwright": "^1.52.0"
   }
 }

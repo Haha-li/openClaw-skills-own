@@ -10,7 +10,9 @@ npm install
 npx playwright install
 ```
 
-## 2) 首次手动登录并保存会话
+## 2) 生成登录态（两种方式）
+
+### 方式 A：有桌面环境时手动登录
 
 ```bash
 npm run login
@@ -18,6 +20,23 @@ npm run login
 
 会打开可视化浏览器，你手动完成登录后回终端按 Enter。
 登录态会保存到：`storageState.json`
+
+### 方式 B：无桌面服务器（推荐）自动登录
+
+1. 新建 `.env`：
+
+```env
+WMJ_USERNAME=你的账号
+WMJ_PASSWORD=你的密码
+```
+
+2. 执行：
+
+```bash
+npm run login:auto
+```
+
+登录成功后同样会保存 `storageState.json`。
 
 ## 3) 测试自动签到
 
