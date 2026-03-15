@@ -1,0 +1,14 @@
+{
+  "name": "wameiji-auto",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Auto check-in script for 挖煤姬 using Playwright",
+  "main": "checkin.js",
+  "scripts": {
+    "login": "node login_once.js",
+    "checkin": "node checkin.js"
+  },
+  "dependencies": {
+    "playwright": "^1.52.0"
+  }
+}
