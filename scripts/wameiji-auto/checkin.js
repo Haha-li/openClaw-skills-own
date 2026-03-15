@@ -5,6 +5,7 @@ const path = require('path');
 const STATE_FILE = path.join(__dirname, 'storageState.json');
 const HOME_URL = 'https://www.meruki.cn/';
 const SCREENSHOT_DIR = path.join(__dirname, 'screenshots');
+const DEBUG_DIR = path.join(__dirname, 'debug');
 
 function ts() {
   return new Date().toISOString().replace(/[:.]/g, '-');
@@ -32,6 +33,7 @@ async function clickFirst(page, selectors, timeout = 7000) {
   }
 
   if (!fs.existsSync(SCREENSHOT_DIR)) fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+  if (!fs.existsSync(DEBUG_DIR)) fs.mkdirSync(DEBUG_DIR, { recursive: true });
 
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ storageState: STATE_FILE });
@@ -42,23 +44,41 @@ async function clickFirst(page, selectors, timeout = 7000) {
 
   try {
     await page.goto(HOME_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(1800);
 
-    // 先尝试进入“我的”或个人中心
-    await clickFirst(page, [
-      'text=我的',
-      'a:has-text("我的")',
-      'button:has-text("我的")',
-      '[href*="/user"]',
-      '[href*="/mine"]'
-    ]);
+    // 处理 cookie 弹层
+    await page.locator('text=同意').first().click({ timeout: 2500 }).catch(() => {});
+
+    // 优先走可确定的个人积分页
+    await page.goto('https://www.meruki.cn/personal/card', { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
+    await page.waitForTimeout(1200);
+
+    // 若被重定向回首页，再尝试点击个人中心入口
+    if (page.url().includes('/mall') || page.url() === HOME_URL || page.url() === `${HOME_URL}/`) {
+      await clickFirst(page, [
+        'a[href="/personal/card"]',
+        'a[href*="/personal"]',
+        'text=我的',
+        'a:has-text("我的")',
+        'button:has-text("我的")',
+        '[href*="/user"]',
+        '[href*="/mine"]'
+      ]);
+      await page.waitForTimeout(1200);
+    }
 
     // 尝试进入签到入口
     await clickFirst(page, [
       'text=每日签到',
       'text=签到领积分',
+      'text=去签到',
       'text=签到',
       'a:has-text("每日签到")',
-      'button:has-text("每日签到")'
+      'button:has-text("每日签到")',
+      'a[href*="sign"]',
+      'a[href*="check"]'
     ]);
 
     // 尝试点击签到按钮
@@ -72,11 +92,8 @@ async function clickFirst(page, selectors, timeout = 7000) {
 
     await page.waitForTimeout(1800);
 
-    const ok = await page
-      .locator('text=签到成功, text=今日已签到, text=已签到')
-      .first()
-      .isVisible()
-      .catch(() => false);
+    const pageText = await page.locator('body').innerText().catch(() => '');
+    const ok = /签到成功|今日已签到|已签到/.test(pageText);
 
     if (ok) {
       success = true;
@@ -89,8 +106,11 @@ async function clickFirst(page, selectors, timeout = 7000) {
   } catch (err) {
     message = `执行异常: ${err.message}`;
   } finally {
-    const shot = path.join(SCREENSHOT_DIR, `checkin-${ts()}.png`);
+    const stamp = ts();
+    const shot = path.join(SCREENSHOT_DIR, `checkin-${stamp}.png`);
+    const html = path.join(DEBUG_DIR, `checkin-${stamp}.html`);
     await page.screenshot({ path: shot, fullPage: true }).catch(() => {});
+    fs.writeFileSync(html, await page.content().catch(() => ''), 'utf8');
 
     await context.close();
     await browser.close();
@@ -98,6 +118,7 @@ async function clickFirst(page, selectors, timeout = 7000) {
     const prefix = success ? '✅' : '⚠️';
     console.log(`${prefix} ${new Date().toISOString()} ${message}`);
     console.log(`截图: ${shot}`);
+    if (!success) console.log(`调试HTML: ${html}`);
 
     if (!success) process.exitCode = 1;
   }
