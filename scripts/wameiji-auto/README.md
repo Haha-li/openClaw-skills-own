@@ -37,6 +37,7 @@ npm run login:auto
 ```
 
 登录成功后同样会保存 `storageState.json`。
+若失败会在 `debug/` 里输出截图和 HTML，便于定位选择器问题。
 
 ## 3) 测试自动签到
 
