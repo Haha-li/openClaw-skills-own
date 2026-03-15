@@ -3,7 +3,7 @@ const { chromium } = require('playwright');
 const path = require('path');
 
 const STATE_FILE = path.join(__dirname, 'storageState.json');
-const LOGIN_URL = 'https://www.meruki.cn/';
+const LOGIN_URL = 'https://www.meruki.cn/login';
 const DEBUG_DIR = path.join(__dirname, 'debug');
 
 const USER = process.env.WMJ_USERNAME || '';
@@ -27,13 +27,18 @@ function ts() {
 
   try {
     await page.goto(LOGIN_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(1800); // 等前端渲染
 
-    // 尝试进入登录流程
-    await page.locator('text=登录, text=去登录, text=立即登录').first().click({ timeout: 8000 }).catch(() => {});
-    await page.waitForTimeout(1200);
+    // 若被重定向到首页，补一次点击“登录”
+    if (!page.url().includes('/login')) {
+      await page.locator('a[href="/login"], text=登录, text=去登录, text=立即登录').first().click({ timeout: 8000 }).catch(() => {});
+      await page.waitForTimeout(1500);
+    }
 
     // 有些页面默认是验证码登录，先切到“密码登录”
-    await page.locator('text=密码登录, text=账号登录').first().click({ timeout: 4000 }).catch(() => {});
+    await page.locator('text=密码登录, text=账号登录').first().click({ timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(800);
 
     const userSelectors = [
       'input[name="username"]',
