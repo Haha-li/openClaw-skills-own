@@ -99,7 +99,28 @@ function ts() {
       throw new Error('未找到账号/密码输入框，可能是滑块/短信验证码登录或页面结构变化');
     }
 
-    await page.locator('button:has-text("登录"), text=登录').first().click({ timeout: 8000 });
+    // 先处理底部 cookie 弹层，避免遮挡按钮
+    await page.locator('text=同意').first().click({ timeout: 3000 }).catch(() => {});
+
+    // 点击登录按钮（不要把 text= 与 CSS 逗号拼在同一个 selector 字符串里）
+    let clickedLogin = false;
+    const loginBtnSelectors = [
+      'button:has-text("登录")',
+      'input[type="submit"]',
+      '.login-btn',
+      '.btn-login'
+    ];
+    for (const sel of loginBtnSelectors) {
+      const el = page.locator(sel).first();
+      if (await el.isVisible().catch(() => false)) {
+        await el.click({ timeout: 5000 }).catch(() => {});
+        clickedLogin = true;
+        break;
+      }
+    }
+    if (!clickedLogin) {
+      await page.getByText('登录', { exact: true }).first().click({ timeout: 5000 }).catch(() => {});
+    }
     await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
     await page.waitForTimeout(1500);
 
