@@ -11,6 +11,7 @@
 - `skills/git-submit-scripts-skills/`：规范化 git 提交流程技能（支持“git提交”触发）
 - `skills/weather/`：天气查询技能（基于 wttr.in，支持当前天气与预报）
 - `skills/skill-vetter/`：安装新 skill 前的安全审查技能（风险检查/权限审查）
+- `skills/ddg-web-search/`：DuckDuckGo 免 API Key 网页搜索技能（Brave 不可用时兜底）
 
 ## 快速使用
 
