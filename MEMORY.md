@@ -8,6 +8,7 @@
 - 用户提到“浏览器/访问网站”时，优先使用本机已配置的无头浏览器自动化链路（agent-browser + CDP 本地容器），而不是先让用户手动操作。
 - 在微信通道里需要发截图时，默认改发“链接截图服务 URL”，不优先走图片直传。
 - 用户说“清理内存”时，默认执行脚本：`/root/.openclaw/workspace/scripts/cleanup-cache.sh`（可先 dry-run）。
+- 处理“查看/列出已安装 skills、查 skill 版本”时，优先使用 `local-skill-manager` skill 的脚本（list_skills.py / check_versions.py），不优先用裸命令行 `ls`。
 
 ## 已确认流程
 - 用户说“git提交”时：按 `skills/git-submit-scripts-skills/SKILL.md` 执行（更新 README、提交并推送 `scripts/ skills/ README.md`）。
@@ -305,3 +306,21 @@
     - 项目迁移/重命名文件后，快速找出失效的相对路径链接。
     - 发布技能或文档前，做“链接是否都可用”的质量门禁。
   - 推荐触发关键词：`Markdown检查`、`文档死链检查`、`README自检`、`链接失效排查`、`发布前文档校验`。
+
+- Skill 名称：local-skill-manager
+  - 功能：集中管理本地 skills 目录，支持列出/查询技能、检查版本、按模板创建新技能及安全删除技能。
+  - 典型使用场景：
+    - 想快速查看“当前装了哪些 skill、版本分别是多少”。
+    - 想标准化创建一个新 skill 脚手架（含 scripts/references/assets 结构）。
+    - 想删除废弃 skill，但希望有 dry-run、路径校验和二次确认等安全保护。
+    - 维护本地技能仓库时做周期性整理与体检。
+  - 推荐触发关键词：`管理skill`、`列出所有skill`、`检查skill版本`、`创建skill`、`删除skill`、`skill管家`。
+
+- Skill 名称：webchat-voice-gui
+  - 功能：给 OpenClaw WebChat 控制台增加麦克风语音输入按钮，浏览器录音后走本地 faster-whisper 转文字（免 API Key）。
+  - 典型使用场景：
+    - 在 WebChat 里想“按住说话/点击说话”直接语音输入，而不是手打。
+    - 需要本地离线语音转文字，不希望把音频发到第三方云服务。
+    - 想在控制台里使用快捷键语音输入（如 Ctrl+Space PTT）。
+    - 需要多语言界面（中/英/德）语音输入体验。
+  - 推荐触发关键词：`WebChat语音输入`、`麦克风按钮`、`按住说话`、`本地语音转文字`、`faster-whisper`、`PTT`。
