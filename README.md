@@ -12,6 +12,7 @@
 - `skills/weather/`：天气查询技能（基于 wttr.in，支持当前天气与预报）
 - `skills/skill-vetter/`：安装新 skill 前的安全审查技能（风险检查/权限审查）
 - `skills/ddg-web-search/`：DuckDuckGo 免 API Key 网页搜索技能（Brave 不可用时兜底）
+- `skills/local-skill-manager/`：本地 Skill 管家（列出/查询/检查版本/创建/删除本地 skills）
 
 ## 快速使用
 
