@@ -20,6 +20,7 @@ Options:
 What it cleans:
   - Docker build cache, unused images, stopped containers, unused networks
   - Common package caches (apt/dnf/yum/apk/pacman, npm/pnpm/yarn, pip)
+  - Generated screenshots under workspace output/
 
 What it does NOT clean:
   - Docker volumes (data safety)
@@ -126,6 +127,10 @@ if command -v pip3 >/dev/null 2>&1; then
   run_cmd "pip3 cache purge || true"
   echo "pip3 done."
 fi
+
+log "Generated screenshot cleanup"
+run_cmd "find /root/.openclaw/workspace/output -maxdepth 1 -type f \\( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \\) -delete 2>/dev/null || true"
+echo "Output screenshots done."
 
 log "Finished"
 echo "Done. (volumes untouched)"
